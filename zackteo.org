@@ -1,0 +1,202 @@
+#+STARTUP: overview
+
+* interface tweaks
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+(global-set-key (kbd "<f5>") 'revert-buffer)
+#+END_SRC
+* EXWM
+Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Example]]
+#+BEGIN_SRC emacs-lisp
+  ;;(use-package exwm
+  ;;  :ensure t
+  ;;  :config
+  ;;  (require 'exwm-config)
+  ;;  (exwm-config-default))
+#+END_SRC
+* try
+#+BEGIN_SRC emacs-lisp
+(use-package try
+	:ensure t)
+#+END_SRC
+
+* which key
+  Brings up some help
+  #+BEGIN_SRC emacs-lisp
+  (use-package which-key
+	:ensure t 
+	:config
+	(which-key-mode))
+  #+END_SRC
+
+* Org mode
+  Org bullets makes things look pretty
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (global-set-key (kbd "C-c o")
+		    (lambda () (interactive) (find-file "~/Dropbox/org Documents/Term5.org")))
+		    ;;(lambda () (interactive) (find-file "~/Documents/org/SUTD.org")))
+    (global-set-key (kbd "C-c c") 'org-capture)
+    (global-set-key (kbd "C-c l") 'org-store-link)
+    (setq org-capture-templates
+	  '(
+	    ("t" "Todo" entry (file+headline "~/Dropbox/org Documents/newgtd.org" "Tasks")
+	     "* TODO %^{Brief Description} %^g\n%?\nAdded: %U")
+	    ("j" "Journal" entry (file+datetree "~/Dropbox/org Documents/CS Diary.org")
+	     "* %?\nEntered on %U\n  %i\n  %a")))
+
+    (setq org-default-notes-file "~/Dropbox/org Documents/Term5.org")
+
+    (setq org-refile-targets (quote (("newgtd.org" :maxlevel . 1) 
+				  ("someday.org" :level . 2))))
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-noter
+      :ensure t)
+  #+END_SRC
+
+  beamer
+  #+BEGIN_SRC emacs-lisp
+    (require 'bind-key)
+    (bind-key "C-c C-e l P" 'org-beamer-export-to-pdf)
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    ;; active Org-babel languages
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '(;; other Babel languages
+       (shell . t)
+       (C . t)
+       (plantuml . t)))
+
+    (setq org-plantuml-jar-path
+	  (expand-file-name "~/.emacs.d/plantuml.jar"))
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package plantuml-mode
+      :ensure t)
+
+    (setq plantuml-jar-path
+	  (expand-file-name "~/.emacs.d/plantuml.jar"))
+  #+END_SRC
+
+* Ace windows for easy window switching
+  #+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+  :ensure t
+  :init
+  (progn
+    (global-set-key [remap other-window] 'ace-window)
+    (custom-set-faces
+     '(aw-leading-char-face
+       ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+    ))
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (windmove-default-keybindings)
+  #+END_SRC
+
+* Swiper / Ivy / Counsel
+  Swiper gives us a really efficient incremental search with regular expressions
+  and Ivy / Counsel replace a lot of ido or helms completion functionality
+  #+BEGIN_SRC emacs-lisp
+  
+  (use-package counsel
+  :ensure t
+  )
+
+  (use-package ivy
+  :ensure t
+  :diminish (ivy-mode)
+  :bind (("C-x b" . ivy-switch-buffer))
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-display-style 'fancy))
+
+
+  (use-package swiper
+  :ensure try
+  :bind (("C-s" . swiper)
+	 ("C-r" . swiper)
+	 ("C-c C-r" . ivy-resume)
+	 ("M-x" . counsel-M-x)
+	 ("C-x C-f" . counsel-find-file))
+  :config
+  (progn
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-display-style 'fancy)
+    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+    ))
+  #+END_SRC
+
+* Avy - navigate by searching for a letter on the screen and jumping to it
+  See https://github.com/abo-abo/avy for more info
+  #+BEGIN_SRC emacs-lisp
+  (use-package avy
+  :ensure t
+  :bind ("M-s" . avy-goto-word-1)) ;; changed from char as per jcs
+  #+END_SRC
+
+* Autocomplete
+  #+BEGIN_SRC emacs-lisp
+  (use-package auto-complete
+  :ensure t
+  :init
+  (progn
+    (ac-config-default)
+    (global-auto-complete-mode t)
+    ))
+  #+END_SRC
+
+* Themes
+  #+BEGIN_SRC emacs-lisp
+  (use-package color-theme-modern
+  :ensure t)
+
+  (use-package zenburn-theme
+  :ensure t
+  :config (load-theme 'zenburn t))
+  #+END_SRC
+* Reveal.js 
+  - emacs-reveal??
+* PDF tools
+  #+BEGIN_SRC emacs-lisp
+    (use-package pdf-tools
+      :ensure t
+      :config
+      (pdf-tools-install)
+      :bind* (:map pdf-view-mode-map 	     
+		  ("w" . pdf-annot-add-squiggly-markup-annotation)
+		  ("c" . pdf-annot-add-strikeout-markup-annotation)
+		  ("u" . pdf-annot-add-underline-markup-annotation)
+		  ("l" . pdf-annot-add-highlight-markup-annotation)
+		  ("t" . pdf-annot-add-text-annotation)
+		  ("d" . pdf-annot-delete)
+		  ))
+
+    (use-package org-pdfview
+      :ensure t)
+  #+END_SRC
+* Magit
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :config
+      (global-set-key (kbd "C-c m") 'magit-status))
+  #+END_SRC
+
