@@ -78,7 +78,13 @@ Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Ex
      '(;; other Babel languages
        (shell . t)
        (C . t)
-       (plantuml . t)))
+       (plantuml . t)
+       (java . t)))
+
+    (require 'ox-latex)
+    (setq org-export-latex-listings t)
+    (add-to-list 'org-latex-packages-alist '("" "minted"))
+    (add-to-list 'org-latex-packages-alist '("" "color"))
 
     (setq org-plantuml-jar-path
 	  (expand-file-name "~/.emacs.d/plantuml.jar"))
