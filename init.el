@@ -1,5 +1,3 @@
-
-
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
@@ -19,10 +17,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files (quote ("~/Dropbox/org Documents/newgtd.org")))
+ '(jdee-server-dir "/home/zackteo/.emacs.d/jdee-server/target/")
+ '(org-agenda-files (quote ("~/Dropbox/org Documents/birthday_new.org")))
  '(package-selected-packages
    (quote
-    (plantuml-mode plantUML-mode org-noter exwm ox-latex org-pdfview htmlize ox-reveal zenburn-theme zeal-at-point which-key use-package try projectile org-bullets magit lsp-ui lsp-java jdee java-snippets eclim dap-mode counsel company-lsp color-theme-modern color-theme auto-complete))))
+    (company-mode company-auctex auctex rustic rust-mode cider elpy plantuml-mode plantUML-mode org-noter exwm ox-latex org-pdfview htmlize ox-reveal zenburn-theme zeal-at-point which-key use-package try projectile org-bullets magit lsp-ui lsp-java jdee java-snippets eclim dap-mode counsel company-lsp color-theme-modern color-theme auto-complete))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

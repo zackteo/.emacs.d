@@ -2,33 +2,162 @@
 
 * interface tweaks
 #+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-message t)
-(tool-bar-mode -1)
-(fset 'yes-or-no-p 'y-or-n-p)
-(global-set-key (kbd "<f5>") 'revert-buffer)
-#+END_SRC
-* EXWM
-Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Example]]
-#+BEGIN_SRC emacs-lisp
-  ;;(use-package exwm
-  ;;  :ensure t
-  ;;  :config
-  ;;  (require 'exwm-config)
-  ;;  (exwm-config-default))
+  (setq inhibit-startup-message t)
+  (tool-bar-mode -1)
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (global-set-key (kbd "<f5>") 'revert-buffer)
 #+END_SRC
 * try
 #+BEGIN_SRC emacs-lisp
-(use-package try
-	:ensure t)
+  (use-package try
+    :ensure t)
 #+END_SRC
 
 * which key
   Brings up some help
   #+BEGIN_SRC emacs-lisp
-  (use-package which-key
-	:ensure t 
-	:config
-	(which-key-mode))
+    (use-package which-key
+      :ensure t 
+      :config
+      (which-key-mode))
+  #+END_SRC
+* Company
+  #+BEGIN_SRC emacs-lisp
+    (use-package company
+      :ensure t)
+  #+END_SRC
+* Ace windows for easy window switching
+  #+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+  :ensure t
+  :init
+  (progn
+    (global-set-key [remap other-window] 'ace-window)
+    (custom-set-faces
+     '(aw-leading-char-face
+       ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+    ))
+  #+END_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (windmove-default-keybindings)
+  #+END_SRC
+* Swiper / Ivy / Counsel
+  Swiper gives us a really efficient incremental search with regular expressions
+  and Ivy / Counsel replace a lot of ido or helms completion functionality
+  #+BEGIN_SRC emacs-lisp  
+    (use-package counsel
+      :ensure t)
+
+    (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind (("C-x b" . ivy-switch-buffer))
+      :config
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (setq ivy-display-style 'fancy))
+
+    (use-package swiper
+      :ensure try
+      :bind (("C-s" . swiper)
+	     ("C-r" . swiper)
+	     ("C-c C-r" . ivy-resume)
+	     ("M-x" . counsel-M-x)
+	     ("C-x C-f" . counsel-find-file))
+      :config
+      (progn
+	(ivy-mode 1)
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-display-style 'fancy)
+	(define-key read-expression-map (kbd "C-r") 'counsel-expression-history)))
+  #+END_SRC
+
+* Avy - navigate by searching for a letter on the screen and jumping to it
+  See https://github.com/abo-abo/avy for more info
+  #+BEGIN_SRC emacs-lisp
+    (use-package avy
+      :ensure t
+      :bind ("M-s" . avy-goto-word-1)) ;; changed from char as per jcs
+  #+END_SRC
+* Autocomplete
+  #+BEGIN_SRC emacs-lisp
+    (use-package auto-complete
+      :ensure t
+      :init
+      (progn
+	(ac-config-default)
+	(global-auto-complete-mode t)
+	))
+  #+END_SRC
+
+* Themes
+  #+BEGIN_SRC emacs-lisp
+  (use-package color-theme-modern
+  :ensure t)
+
+  (use-package zenburn-theme
+  :ensure t
+  :config (load-theme 'zenburn t))
+  #+END_SRC
+* PDF tools
+  #+BEGIN_SRC emacs-lisp
+    (use-package pdf-tools
+      :ensure t
+;      :config
+;      (pdf-tools-install)
+      :bind* (:map pdf-view-mode-map 	     
+		  ("w" . pdf-annot-add-squiggly-markup-annotation)
+		  ("c" . pdf-annot-add-strikeout-markup-annotation)
+		  ("e" . pdf-annot-add-underline-markup-annotation)
+		  ("r" . pdf-annot-add-highlight-markup-annotation)
+		  ("t" . pdf-annot-add-text-annotation)
+		  ("d" . pdf-annot-delete)
+		  ))
+
+    (use-package org-pdfview
+      :ensure t)
+  #+END_SRC
+
+* Magit
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :config
+      (global-set-key (kbd "C-c m") 'magit-status))
+  #+END_SRC
+* Python
+  #+BEGIN_SRC emacs-lisp
+    (use-package elpy
+      :ensure t
+      :init
+      (elpy-enable))
+  #+END_SRC
+* Clojure
+  #+BEGIN_SRC emacs-lisp
+    (use-package cider
+      :ensure t)
+    (add-hook 'cider-repl-mode-hook #'company-mode)
+    (add-hook 'cider-mode-hook #'company-mode)
+
+    ;; tab complete
+    (global-set-key (kbd "TAB") #'company-indent-or-complete-common)
+
+    ;; fuzzy
+    (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+    (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
+  #+END_SRC
+* Rust
+  #+BEGIN_SRC emacs-lisp
+    (use-package rustic
+      :ensure t)
+  #+END_SRC
+* Auctex
+  #+BEGIN_SRC emacs-lisp
+    (use-package tex-mode
+      :ensure auctex)
+    (use-package company-auctex
+      :ensure t)
   #+END_SRC
 
 * Org mode
@@ -38,13 +167,13 @@ Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Ex
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
   #+END_SRC
 
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "C-c o")
-		    (lambda () (interactive) (find-file "~/Dropbox/org Documents/Term5.org")))
-		    ;;(lambda () (interactive) (find-file "~/Documents/org/SUTD.org")))
+		    (lambda () (interactive) (find-file "~/Documents/Summer Projects 2020/Summer-stuff.org")))
+		    ;(lambda () (interactive) (find-file "~/Dropbox/org Documents/Term5.org")))
+		    ;(lambda () (interactive) (find-file "~/Documents/org/SUTD.org")))
     (global-set-key (kbd "C-c c") 'org-capture)
     (global-set-key (kbd "C-c l") 'org-store-link)
     (setq org-capture-templates
@@ -83,7 +212,7 @@ Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Ex
 
     (require 'ox-latex)
     (setq org-export-latex-listings t)
-    (add-to-list 'org-latex-packages-alist '("" "minted"))
+;;    (add-to-list 'org-latex-packages-alist '("" "minted"))
     (add-to-list 'org-latex-packages-alist '("" "color"))
 
     (setq org-plantuml-jar-path
@@ -98,111 +227,21 @@ Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Ex
 	  (expand-file-name "~/.emacs.d/plantuml.jar"))
   #+END_SRC
 
-* Ace windows for easy window switching
-  #+BEGIN_SRC emacs-lisp
-  (use-package ace-window
-  :ensure t
-  :init
-  (progn
-    (global-set-key [remap other-window] 'ace-window)
-    (custom-set-faces
-     '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
-    ))
-  #+END_SRC
-
-  #+BEGIN_SRC emacs-lisp
-    (windmove-default-keybindings)
-  #+END_SRC
-
-* Swiper / Ivy / Counsel
-  Swiper gives us a really efficient incremental search with regular expressions
-  and Ivy / Counsel replace a lot of ido or helms completion functionality
-  #+BEGIN_SRC emacs-lisp
-  
-  (use-package counsel
-  :ensure t
-  )
-
-  (use-package ivy
-  :ensure t
-  :diminish (ivy-mode)
-  :bind (("C-x b" . ivy-switch-buffer))
-  :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-display-style 'fancy))
-
-
-  (use-package swiper
-  :ensure try
-  :bind (("C-s" . swiper)
-	 ("C-r" . swiper)
-	 ("C-c C-r" . ivy-resume)
-	 ("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file))
-  :config
-  (progn
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-display-style 'fancy)
-    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-    ))
-  #+END_SRC
-
-* Avy - navigate by searching for a letter on the screen and jumping to it
-  See https://github.com/abo-abo/avy for more info
-  #+BEGIN_SRC emacs-lisp
-  (use-package avy
-  :ensure t
-  :bind ("M-s" . avy-goto-word-1)) ;; changed from char as per jcs
-  #+END_SRC
-
-* Autocomplete
-  #+BEGIN_SRC emacs-lisp
-  (use-package auto-complete
-  :ensure t
-  :init
-  (progn
-    (ac-config-default)
-    (global-auto-complete-mode t)
-    ))
-  #+END_SRC
-
-* Themes
-  #+BEGIN_SRC emacs-lisp
-  (use-package color-theme-modern
-  :ensure t)
-
-  (use-package zenburn-theme
-  :ensure t
-  :config (load-theme 'zenburn t))
-  #+END_SRC
-* Reveal.js 
-  - emacs-reveal??
-* PDF tools
-  #+BEGIN_SRC emacs-lisp
-    (use-package pdf-tools
-      :ensure t
-      :config
-      (pdf-tools-install)
-      :bind* (:map pdf-view-mode-map 	     
-		  ("w" . pdf-annot-add-squiggly-markup-annotation)
-		  ("c" . pdf-annot-add-strikeout-markup-annotation)
-		  ("u" . pdf-annot-add-underline-markup-annotation)
-		  ("l" . pdf-annot-add-highlight-markup-annotation)
-		  ("t" . pdf-annot-add-text-annotation)
-		  ("d" . pdf-annot-delete)
-		  ))
-
-    (use-package org-pdfview
-      :ensure t)
-  #+END_SRC
-* Magit
-  #+BEGIN_SRC emacs-lisp
-    (use-package magit
-      :ensure t
-      :config
-      (global-set-key (kbd "C-c m") 'magit-status))
-  #+END_SRC
+* Not implemented
+** Java
+   #+BEGIN_SRC emacs-lisp
+ ;    (use-package jdee
+ ;    :ensure t)
+   #+END_SRC
+** Reveal.js 
+   - emacs-reveal??
+** EXWM
+ Following [[https://github.com/ch11ng/exwm/wiki/Configuration-Example][Config Example]]
+ #+BEGIN_SRC emacs-lisp
+   ;;(use-package exwm
+   ;;  :ensure t
+   ;;  :config
+   ;;  (require 'exwm-config)
+   ;;  (exwm-config-default))
+ #+END_SRC
 
